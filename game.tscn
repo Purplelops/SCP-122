@@ -1,0 +1,390 @@
+[gd_scene load_steps=27 format=3 uid="uid://8a4yk23gny1d"]
+
+[ext_resource type="Script" path="res://game.gd" id="1_7j7s1"]
+[ext_resource type="Script" path="res://NightLight.gd" id="1_45ubo"]
+[ext_resource type="AudioStream" uid="uid://cifhjrjcs8ndw" path="res://skyclad_sound_ambience_dark_loop_dynamic_tones_howling_moaning_mournful_eerie_105.mp3" id="3_4vykb"]
+[ext_resource type="Texture2D" uid="uid://cg67k73dep5fo" path="res://angel_state_1.png" id="4_f432e"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_035yk"]
+size = Vector2(2.5, 3)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_soylw"]
+size = Vector2(2.5, 3)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_w2efx"]
+size = Vector2(2.5, 2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7we3i"]
+
+[sub_resource type="Animation" id="Animation_ctu74"]
+resource_name = "dim"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 1.4, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.3, 0.07, 0.07, 0.3]
+}
+
+[sub_resource type="Animation" id="Animation_v0x4r"]
+resource_name = "flicker"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.6, 0.7, 1.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0.0, 0.3, 0.0, 0.3, 0.0, 0.3]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_buh3j"]
+_data = {
+"dim": SubResource("Animation_ctu74"),
+"flicker": SubResource("Animation_v0x4r")
+}
+
+[sub_resource type="Environment" id="Environment_cooi6"]
+background_mode = 1
+background_color = Color(0.109689, 0.132732, 0.118402, 1)
+background_energy_multiplier = 0.0
+fog_enabled = true
+fog_light_color = Color(0.459701, 0.59157, 0.456277, 1)
+fog_light_energy = 0.5
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_ve270"]
+dof_blur_near_distance = 1.29
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cwpvv"]
+albedo_color = Color(0.506729, 0.50304, 3.85046e-07, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ra8l6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ourv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0bor"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e07dv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tqy41"]
+material = SubResource("StandardMaterial3D_e07dv")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_46ht2"]
+albedo_color = Color(1, 0.657113, 0.442858, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wlef5"]
+material = SubResource("StandardMaterial3D_46ht2")
+size = Vector3(0.7, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nhw0v"]
+
+[sub_resource type="Shader" id="Shader_3krm0"]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform float alpha = .0;
+uniform float inner_radius = 0.0;
+uniform float outer_radius = 1.0;
+
+void fragment() {
+	float x = abs(UV.r-.5)*2.0;
+	float y = abs(UV.g-.5)*2.0;
+	float q = 1.0-(1.0-sqrt(x*x+y*y)/outer_radius)/(1.0-inner_radius);
+	COLOR = vec4(0, 0, 0, q*alpha);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lyjbb"]
+shader = SubResource("Shader_3krm0")
+shader_parameter/alpha = 0.835
+shader_parameter/inner_radius = -0.4
+shader_parameter/outer_radius = 0.95
+
+[sub_resource type="LabelSettings" id="LabelSettings_qvluy"]
+font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_r7iom"]
+font_size = 60
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_7j7s1")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment"]
+mesh = SubResource("PlaneMesh_035yk")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(-1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0, 1, 0, 2, 0)
+mesh = SubResource("PlaneMesh_soylw")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1, -1.5)
+mesh = SubResource("PlaneMesh_w2efx")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(-1, 8.74228e-08, -3.82137e-15, 0, -4.37114e-08, -1, -8.74228e-08, -1, 4.37114e-08, 0, 1, 1.5)
+mesh = SubResource("PlaneMesh_w2efx")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(-6.55671e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1.5, -4.37114e-08, 1.91069e-15, 1.25, 1, 0)
+mesh = SubResource("PlaneMesh_7we3i")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(1.96701e-07, 1, -4.37114e-08, 0, -4.37114e-08, -1, -1.5, 1.31134e-07, -5.73206e-15, -1.25, 1, 0)
+mesh = SubResource("PlaneMesh_7we3i")
+skeleton = NodePath("../..")
+
+[node name="NightLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.657682, 0.798044)
+light_color = Color(0, 0.73726, 0.882437, 1)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 2.3
+script = ExtResource("1_45ubo")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="NightLight"]
+libraries = {
+"": SubResource("AnimationLibrary_buh3j")
+}
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cooi6")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.727536, 1.25159)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+attributes = SubResource("CameraAttributesPractical_ve270")
+
+[node name="Bed" type="Node3D" parent="."]
+transform = Transform3D(0.884395, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0.361217, 0.75)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Bed"]
+size = Vector3(1, 0.5, 1.5)
+material = SubResource("StandardMaterial3D_cwpvv")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Bed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46637, 0.194717, -0.772586)
+size = Vector3(0.0672607, 0.889435, 0.0451719)
+material = SubResource("StandardMaterial3D_ra8l6")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Bed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.458379, 0.198212, -0.771487)
+size = Vector3(0.0672607, 0.896423, 0.0429746)
+material = SubResource("StandardMaterial3D_8ourv")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Bed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00430438, 0.472126, -0.770009)
+size = Vector3(0.868469, 0.146057, 0.0200254)
+material = SubResource("StandardMaterial3D_r0bor")
+
+[node name="Closet" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.662317, 0, -1.59645)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Closet"]
+transform = Transform3D(1, 0, 0, 0, 1.78333, 0, 0, 0, 0.377792, -0.0646539, 0.864263, 0.254256)
+mesh = SubResource("BoxMesh_tqy41")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Closet"]
+transform = Transform3D(0.480248, 0, 0, 0, 1.78333, 0, 0, 0, 0.377792, -0.305678, 0.864263, 0.273179)
+mesh = SubResource("BoxMesh_tqy41")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Closet"]
+transform = Transform3D(0.480248, 0, 0, 0, 1.78333, 0, 0, 0, 0.377792, 0.185229, 0.864263, 0.273179)
+mesh = SubResource("BoxMesh_tqy41")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Closet"]
+transform = Transform3D(0.0263429, 0, 0, 0, 0.199136, 0, 0, 0, 0.377792, -0.00803435, 0.864263, 0.298308)
+mesh = SubResource("BoxMesh_tqy41")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Closet"]
+transform = Transform3D(0.0263429, 0, 0, 0, 0.199136, 0, 0, 0, 0.377792, -0.116971, 0.864263, 0.298308)
+mesh = SubResource("BoxMesh_tqy41")
+
+[node name="Door" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 0.0502037, 0, 1, 0, -1, 0, -2.19448e-09, 1.22948, 0.992178, -0.697827)
+mesh = SubResource("BoxMesh_wlef5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Door"]
+transform = Transform3D(0.14984, 0, -5.10703e-15, 0, 0.0381221, 0, 0, 0, 1, -0.263798, -0.0248196, -0.877653)
+mesh = SubResource("BoxMesh_nhw0v")
+
+[node name="Ambience" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_4vykb")
+autoplay = true
+
+[node name="Angel" type="Sprite3D" parent="."]
+transform = Transform3D(0.124035, 0, -0.028388, 0, 0.181543, 0, 0.0231924, 0, 0.151822, 0.516398, 1.02322, -1.13156)
+visible = false
+texture = ExtResource("4_f432e")
+
+[node name="Vignette" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_lyjbb")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BriefingScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="BriefingScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="BriefingScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -527.0
+offset_top = -295.5
+offset_right = 527.0
+offset_bottom = 295.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SCP-122-1 Name: Anna Talinn
+Age: 2 years old
+Date of Use: 3/01/2017"
+label_settings = SubResource("LabelSettings_qvluy")
+
+[node name="ContinueButton" type="Button" parent="BriefingScreen"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -325.0
+offset_top = -145.0
+offset_right = 325.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 100
+text = "View Footage"
+
+[node name="FootageTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="StartScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="StartScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="StartScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -924.0
+offset_right = 924.0
+offset_bottom = 857.0
+grow_horizontal = 2
+text = "Welcome
+
+You are tasked with viewing security footage 
+from the bedroom of a young girl referred to as SCP-122-1.
+
+The footage is 30 seconds long. There are multiple videos.
+Please record anything anomalous after the footage has ended.
+
+Anomalous things include: light flickering, light dimming, and
+an entity referred to as SCP-122-2."
+label_settings = SubResource("LabelSettings_r7iom")
+horizontal_alignment = 1
+
+[node name="StartScreenContinueButton" type="Button" parent="StartScreen"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_top = -8.0
+offset_right = 4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 100
+text = "Continue
+"
+
+[node name="ConfirmExit" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -144.5
+offset_top = -65.5
+offset_right = 144.5
+offset_bottom = 65.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="ConfirmExit"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Are you sure you want to quit?"
+
+[node name="YesButton" type="Button" parent="ConfirmExit"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Yes
+"
+
+[node name="NoButton" type="Button" parent="ConfirmExit"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+text = "No"
+
+[connection signal="pressed" from="BriefingScreen/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="timeout" from="FootageTimer" to="." method="_on_footage_timer_timeout"]
+[connection signal="pressed" from="StartScreen/StartScreenContinueButton" to="." method="_on_start_screen_continue_button_pressed"]
+[connection signal="pressed" from="ConfirmExit/YesButton" to="." method="_on_yes_button_pressed"]
+[connection signal="pressed" from="ConfirmExit/NoButton" to="." method="_on_no_button_pressed"]
