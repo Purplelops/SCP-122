@@ -1,9 +1,11 @@
-[gd_scene load_steps=27 format=3 uid="uid://8a4yk23gny1d"]
+[gd_scene load_steps=31 format=3 uid="uid://8a4yk23gny1d"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_7j7s1"]
 [ext_resource type="Script" path="res://NightLight.gd" id="1_45ubo"]
 [ext_resource type="AudioStream" uid="uid://cifhjrjcs8ndw" path="res://skyclad_sound_ambience_dark_loop_dynamic_tones_howling_moaning_mournful_eerie_105.mp3" id="3_4vykb"]
 [ext_resource type="Texture2D" uid="uid://cg67k73dep5fo" path="res://angel_state_1.png" id="4_f432e"]
+[ext_resource type="Texture2D" uid="uid://can0os45qndej" path="res://angel_state_2.png" id="4_ryng5"]
+[ext_resource type="Texture2D" uid="uid://cqgvxsv0an7rd" path="res://angel_state_3.png" id="5_yc05t"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_035yk"]
 size = Vector2(2.5, 3)
@@ -88,6 +90,23 @@ size = Vector3(0.7, 2, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_nhw0v"]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_opuwu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_f432e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ryng5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_yc05t")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="Shader" id="Shader_3krm0"]
 code = "shader_type canvas_item;
 render_mode blend_mix;
@@ -110,6 +129,9 @@ shader_parameter/inner_radius = -0.4
 shader_parameter/outer_radius = 0.95
 
 [sub_resource type="LabelSettings" id="LabelSettings_qvluy"]
+font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_dr866"]
 font_size = 60
 
 [sub_resource type="LabelSettings" id="LabelSettings_r7iom"]
@@ -224,14 +246,14 @@ mesh = SubResource("BoxMesh_wlef5")
 transform = Transform3D(0.14984, 0, -5.10703e-15, 0, 0.0381221, 0, 0, 0, 1, -0.263798, -0.0248196, -0.877653)
 mesh = SubResource("BoxMesh_nhw0v")
 
+[node name="Angel" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(0.12, 0, 0, 0, 0.18, 0, 0, 0, 0.15, 0.5, 1, -1)
+visible = false
+sprite_frames = SubResource("SpriteFrames_opuwu")
+
 [node name="Ambience" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_4vykb")
 autoplay = true
-
-[node name="Angel" type="Sprite3D" parent="."]
-transform = Transform3D(0.124035, 0, -0.028388, 0, 0.181543, 0, 0.0231924, 0, 0.151822, 0.516398, 1.02322, -1.13156)
-visible = false
-texture = ExtResource("4_f432e")
 
 [node name="Vignette" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_lyjbb")
@@ -240,6 +262,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="FootageTimer" type="Timer" parent="."]
+wait_time = 30.0
+one_shot = true
 
 [node name="BriefingScreen" type="Control" parent="."]
 layout_mode = 3
@@ -291,8 +317,87 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 100
 text = "View Footage"
 
-[node name="FootageTimer" type="Timer" parent="."]
-one_shot = true
+[node name="NoteScreen" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="NoteScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Control" type="Control" parent="NoteScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NoteScreen/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -190.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NoteScreen/Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="NoteScreen/Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Amount of flicker:
+"
+label_settings = SubResource("LabelSettings_dr866")
+
+[node name="LineEdit" type="LineEdit" parent="NoteScreen/Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="NoteScreen/Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="NoteScreen/Control/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Amount of dimming:
+"
+label_settings = SubResource("LabelSettings_dr866")
+
+[node name="LineEdit" type="LineEdit" parent="NoteScreen/Control/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+
+[node name="NoteScreenConfirm" type="Button" parent="NoteScreen"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -121.5
+offset_top = -91.0
+offset_right = 121.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 60
+text = "Confirm
+"
 
 [node name="StartScreen" type="Control" parent="."]
 layout_mode = 3
@@ -325,11 +430,11 @@ text = "Welcome
 You are tasked with viewing security footage 
 from the bedroom of a young girl referred to as SCP-122-1.
 
-The footage is 30 seconds long. There are multiple videos.
+The footage is 30 seconds long and are recorded
+ during the highest level of activity. There are multiple videos.
 Please record anything anomalous after the footage has ended.
 
-Anomalous things include: light flickering, light dimming, and
-an entity referred to as SCP-122-2."
+Anomalous things include: light flickering and light dimming"
 label_settings = SubResource("LabelSettings_r7iom")
 horizontal_alignment = 1
 
@@ -383,8 +488,15 @@ size_flags_horizontal = 8
 size_flags_vertical = 4
 text = "No"
 
-[connection signal="pressed" from="BriefingScreen/ContinueButton" to="." method="_on_continue_button_pressed"]
+[node name="Stage3Marker" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.082)
+
+[node name="Stage4Marker" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.513339, 0.762375)
+
 [connection signal="timeout" from="FootageTimer" to="." method="_on_footage_timer_timeout"]
+[connection signal="pressed" from="BriefingScreen/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="NoteScreen/NoteScreenConfirm" to="." method="_on_note_screen_confirm_pressed"]
 [connection signal="pressed" from="StartScreen/StartScreenContinueButton" to="." method="_on_start_screen_continue_button_pressed"]
 [connection signal="pressed" from="ConfirmExit/YesButton" to="." method="_on_yes_button_pressed"]
 [connection signal="pressed" from="ConfirmExit/NoButton" to="." method="_on_no_button_pressed"]
