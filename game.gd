@@ -76,6 +76,7 @@ func _on_footage_timer_timeout() -> void:
 			"""
 			$Angel.position = $Stage4Marker.position
 			$Angel.frame = 2
+			$Head.rotate_x(deg_to_rad(11))
 		5:
 			$BriefingScreen/Label.text = """ERROR
 			"""

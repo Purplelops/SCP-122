@@ -264,7 +264,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="FootageTimer" type="Timer" parent="."]
-wait_time = 30.0
+wait_time = 2.0
 one_shot = true
 
 [node name="BriefingScreen" type="Control" parent="."]
