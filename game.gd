@@ -3,13 +3,9 @@ extends Node3D
 var stage = 1
 
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_down"):
-		$NightLight/AnimationPlayer.current_animation = "dim"
-	if Input.is_action_just_pressed("ui_up"):
-		$NightLight/AnimationPlayer.current_animation = "flicker"
 	if Input.is_action_just_pressed("exit"):
 		$ConfirmExit.visible = true
-
+	#$DebugLabel.text = str(stage) + " " + str($FootageTimer.time_left)
 
 
 func _on_yes_button_pressed() -> void:
@@ -21,8 +17,21 @@ func _on_no_button_pressed() -> void:
 
 # Go to the game screen and play light flickering and dimming animations
 func _on_continue_button_pressed() -> void:
-	$BriefingScreen.visible = false
-	$FootageTimer.start()
+	if stage == 1:
+		$Ambience.play()
+	
+	if stage < 7:
+		$BriefingScreen.visible = false
+		$FootageTimer.start()
+	else:
+		get_tree().quit()
+	
+	if stage == 4:
+		$Ambience.playing = false
+		$Ambience2.play()
+	
+	if stage == 6:
+		$Ambience2.playing = false
 	
 	match stage:
 		2:
@@ -44,13 +53,36 @@ func _on_continue_button_pressed() -> void:
 			$NightLight/AnimationPlayer.play("flicker")
 			await get_tree().create_timer(3).timeout
 			$NightLight/AnimationPlayer.play("flicker")
-
+		5:
+			await get_tree().create_timer(7).timeout
+			$GhostWhispers.play()
+			await get_tree().create_timer(23).timeout
+			$GhostWhispers.playing = false
+		6:
+			await get_tree().create_timer(9).timeout
+			$Angel.position = $JumpscareMarker.position
+			$Angel.rotate_y(deg_to_rad(60))
+			$Angel.visible = true
+			$JumpscareAudio.play()
+			await get_tree().create_timer(1).timeout
+			
+			$BriefingScreen/Label.text = """CRITICAL ERROR
+			Thanks for playing!
+			Game by Purplelops
+			Sounds obtained from ZapSplat (Check them out)
+			"""
+			$BriefingScreen/ContinueButton.text = "Exit"
+			stage = 10
+			$FootageTimer.stop()
+			$BriefingScreen.visible = true
 
 # When timer ends, go to the next stage and change the briefing text
 func _on_footage_timer_timeout() -> void:
-	$NoteScreen.visible = true
+	if stage < 6:
+		$NoteScreen.visible = true
 	$BriefingScreen.visible = true
-	stage += 1
+	if stage < 7:
+		stage += 1
 	
 	match stage:
 		2:
@@ -76,10 +108,29 @@ func _on_footage_timer_timeout() -> void:
 			"""
 			$Angel.position = $Stage4Marker.position
 			$Angel.frame = 2
-			$Head.rotate_x(deg_to_rad(11))
+			$Head.rotate_x(deg_to_rad(12))
 		5:
-			$BriefingScreen/Label.text = """ERROR
+			$BriefingScreen/Label.text = """EMERGENCY ALERT: 
+			Site-wide blackout detected. 
+			CHECK SCP-122 STATUS ASAP.
 			"""
+			$NightLight.visible = false
+			$Angel.visible = false
+		6:
+			$BriefingScreen/Label.text = """SCP-122-1 LOST
+			LAST VIDEO RECOVERED FROM 
+			SCP-122 CONTAINMENT CHAMBER
+			"""
+			$Head.rotate_y(deg_to_rad(69))
+			$SpotLight3D.visible = true
+			$EndScreen.visible = true
+		_:
+			$BriefingScreen/Label.text = """CRITICAL ERROR
+			Thanks for playing!
+			Game by Purplelops
+			Sounds obtained from ZapSplat (Check them out)
+			"""
+			$BriefingScreen/ContinueButton.text = "Exit"
 
 # Hide start screen
 func _on_start_screen_continue_button_pressed() -> void:
